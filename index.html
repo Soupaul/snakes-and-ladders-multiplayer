@@ -3,18 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Multiplayer Snakes and Ladders</title>
+    <title>Snakes and Ladders</title>
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        text-align: center;
+      }
+
+      .board {
+
+        position: absolute;
+        transform: translate(-50%,0);
+        top: 0;
+        left: 50%;
+        width: 80vh;
+        height: 80vh;
+        background: url('images/board.png');
+        background-size: contain;
+        z-index: -1;
+
+      }
+
+      .container {
+
+        position: absolute;
+        transform: translate(-50%,0);
+        top: 0;
+        left: 50%;
+        width: 80vh;
+        height: 80vh;
+        z-index: 1;
+
       }
     </style>
   </head>
   <body>
-    <canvas id="gameArea"></canvas>
+    <div class="board"></div>
+    <img src="images/red_piece.png" alt="" hidden="true" id="red-piece">
+    <img src="images/blue_piece.png" alt="" hidden="true" id="blue-piece">
+    <div class="container">
+      <canvas id="canvas"></canvas>
+    </div>
     <script src="index.js"></script>
   </body>
 </html>
