@@ -12,36 +12,32 @@
       }
 
       .board {
-
         position: absolute;
-        transform: translate(-50%,0);
+        transform: translate(-50%, 0);
         top: 0;
         left: 50%;
         width: 80vh;
         height: 80vh;
-        background: url('images/board.png');
+        background: url("images/board.png");
         background-size: contain;
         z-index: -1;
-
       }
 
       .container {
-
         position: absolute;
-        transform: translate(-50%,0);
+        transform: translate(-50%, 0);
         top: 0;
         left: 50%;
         width: 80vh;
         height: 80vh;
         z-index: 1;
-
       }
     </style>
   </head>
   <body>
     <div class="board"></div>
-    <img src="images/red_piece.png" alt="" hidden="true" id="red-piece">
-    <img src="images/blue_piece.png" alt="" hidden="true" id="blue-piece">
+    <img src="images/red_piece.png" alt="" hidden="true" id="red-piece" />
+    <img src="images/blue_piece.png" alt="" hidden="true" id="blue-piece" />
     <div class="container">
       <canvas id="canvas"></canvas>
     </div>

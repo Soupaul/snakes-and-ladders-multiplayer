@@ -33,33 +33,35 @@ const snakes = [
 ];
 
 var imgs = document.images,
-    len = imgs.length,
-    counter = 0;
+  len = imgs.length,
+  counter = 0;
 
-[].forEach.call( imgs, function( img ) {
-    if(img.complete)
-      incrementCounter();
-    else
-      img.addEventListener( 'load', incrementCounter, false );
-} );
+[].forEach.call(imgs, function (img) {
+  if (img.complete) incrementCounter();
+  else img.addEventListener("load", incrementCounter, false);
+});
 
 function incrementCounter() {
-    counter++;
-    if ( counter === len ) {
-        console.log( 'All images loaded!');
-        interval = setInterval(game,1000);
-        // ctx.drawImage(bluePieceImg,40,canvas.height-50,30,40);
-    }
+  counter++;
+  if (counter === len) {
+    console.log("All images loaded!");
+    interval = setInterval(game, 1000);
+    // ctx.drawImage(bluePieceImg,40,canvas.height-50,30,40);
+  }
 }
 
-function game(){
-
-  if(i == 9){
+function game() {
+  if (i == 9) {
     clearInterval(interval);
   }
 
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(redPieceImg,offset + i*side - 15,canvas.height-50,30,40);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(
+    redPieceImg,
+    offset + i * side - 15,
+    canvas.height - 50,
+    30,
+    40
+  );
   i++;
-
 }
