@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snakes and Ladders</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <div class="board"></div>
@@ -11,6 +16,22 @@
     <img src="images/blue_piece.png" alt="" hidden="true" id="blue-piece" />
     <div class="container">
       <canvas id="canvas"></canvas>
+    </div>
+    <div class="info-box">
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-input"
+          id="name"
+          placeholder="Your name"
+          required
+        />
+        <button class="btn draw-border" id="start">Start Playing</button>
+      </div>
+    </div>
+    <button class="btn draw-border" id="roll-button">Roll</button>
+    <div class="dice">
+      <img src="./images/dice/dice1.png" alt="" id="dice" />
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/index.js"></script>

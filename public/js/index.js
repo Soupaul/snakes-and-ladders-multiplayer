@@ -1,6 +1,6 @@
 let canvas = document.getElementById("canvas");
-canvas.width = document.documentElement.clientHeight * 0.8;
-canvas.height = document.documentElement.clientHeight * 0.8;
+canvas.width = document.documentElement.clientHeight * 0.9;
+canvas.height = document.documentElement.clientHeight * 0.9;
 let ctx = canvas.getContext("2d");
 
 let redPieceImg = document.getElementById("red-piece");
@@ -45,23 +45,30 @@ function incrementCounter() {
   counter++;
   if (counter === len) {
     console.log("All images loaded!");
-    interval = setInterval(game, 1000);
+    // interval = setInterval(game, 1000);
     // ctx.drawImage(bluePieceImg,40,canvas.height-50,30,40);
   }
 }
 
-function game() {
-  if (i == 9) {
-    clearInterval(interval);
-  }
+document.getElementById("roll-button").addEventListener("click", rollDice);
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(
-    redPieceImg,
-    offset + i * side - 15,
-    canvas.height - 50,
-    30,
-    40
-  );
-  i++;
+function rollDice() {
+  const number = Math.ceil(Math.random() * 6);
+  document.getElementById("dice").src = `./images/dice/dice${number}.png`;
 }
+
+// function game() {
+//   if (i == 9) {
+//     clearInterval(interval);
+//   }
+
+//   ctx.clearRect(0, 0, canvas.width, canvas.height);
+//   ctx.drawImage(
+//     redPieceImg,
+//     offset + i * side - 15,
+//     canvas.height - 50,
+//     30,
+//     40
+//   );
+//   i++;
+// }
