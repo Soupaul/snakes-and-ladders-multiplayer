@@ -1,3 +1,7 @@
+// Making Connection
+const socket = io.connect("http://localhost:3000");
+socket.emit("join", "");
+
 let canvas = document.getElementById("canvas");
 canvas.width = document.documentElement.clientHeight * 0.9;
 canvas.height = document.documentElement.clientHeight * 0.9;
@@ -72,3 +76,16 @@ function rollDice() {
 //   );
 //   i++;
 // }
+
+// Emit events
+document.getElementById("start-btn").addEventListener("click", () => {
+  socket.emit("join", {
+    user: document.getElementById("name").value,
+  });
+});
+
+// Listen for events
+socket.on("join", function (data) {
+  console.log(data);
+  // document.querySelector("players-list").innerHTML = data;
+});

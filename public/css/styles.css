@@ -117,7 +117,7 @@ body {
   transition: all 0.5s;
 }
 
-#start {
+#start-btn {
   position: absolute;
   top: 11%;
   right: 8%;
