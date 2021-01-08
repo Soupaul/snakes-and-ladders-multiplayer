@@ -1,3 +1,15 @@
+const socket = io.connect("http://localhost:3000");
+
+const sleep = (milliseconds) => {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+};
+
+const COMP1 = 0;
+const COMP2 = 1;
+let playerPos = 0;
+let compPos = 0;
+let turn = COMP1;
+
 let canvas = document.getElementById("canvas");
 canvas.width = document.documentElement.clientHeight * 0.9;
 canvas.height = document.documentElement.clientHeight * 0.9;
@@ -7,8 +19,9 @@ let redPieceImg = document.getElementById("red-piece");
 let bluePieceImg = document.getElementById("blue-piece");
 
 const side = canvas.width / 10;
-const offset = 37.5;
-let i = 0;
+const offsetX = 37.5;
+const offsetY = 50;
+// let i = 0;
 let interval;
 
 const ladders = [
@@ -47,14 +60,51 @@ function incrementCounter() {
     console.log("All images loaded!");
     // interval = setInterval(game, 1000);
     // ctx.drawImage(bluePieceImg,40,canvas.height-50,30,40);
+    drawPin(redPieceImg, playerPos);
+    drawPin(bluePieceImg, compPos);
+    interval = setInterval(game, 3000);
   }
 }
 
-document.getElementById("roll-button").addEventListener("click", rollDice);
+document.getElementById("roll-button").addEventListener("click", () => {
+  rollDice();
+  // turn = COMP;
+});
 
 function rollDice() {
   const number = Math.ceil(Math.random() * 6);
   document.getElementById("dice").src = `./images/dice/dice${number}.png`;
+  return number;
+}
+
+function game() {
+  if (playerPos == 99 || compPos == 99) {
+    clearInterval(interval);
+  }
+
+  // while (playerPos != 99 && compPos != 99) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let num = rollDice();
+  if (turn == COMP1) {
+    drawPin(redPieceImg, (playerPos += num));
+    drawPin(bluePieceImg, compPos);
+    turn = COMP2;
+  } else if (turn == COMP2) {
+    drawPin(redPieceImg, playerPos);
+    drawPin(bluePieceImg, (compPos += num));
+    turn = COMP1;
+  }
+  // }
+}
+
+function drawPin(img, pos) {
+  let xPos =
+    Math.floor(pos / 10) % 2 == 0
+      ? (pos % 10) * side - 15 + offsetX
+      : canvas.width - ((pos % 10) * side - 15 + offsetX);
+  let yPos = canvas.height - (Math.floor(pos / 10) * side + offsetY);
+
+  ctx.drawImage(img, xPos, yPos, 30, 40);
 }
 
 // function game() {

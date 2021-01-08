@@ -13,3 +13,9 @@ app.use(express.static("public"));
 
 // Socket setup
 const io = socket(server);
+
+io.on("connection",(socket)=>{
+
+  console.log("Made socket connection: ",socket.id);
+
+});
