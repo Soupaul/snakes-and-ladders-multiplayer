@@ -1,10 +1,12 @@
 // Making Connection
 const socket = io.connect("http://localhost:3000");
-socket.emit("join", "");
+socket.emit("joined", "");
 
 // const sleep = (milliseconds) => {
 //   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 // };
+
+let player;
 
 const COMP1 = 0;
 const COMP2 = 1;
@@ -55,6 +57,16 @@ var imgs = document.images,
   else img.addEventListener("load", incrementCounter, false);
 });
 
+document.getElementById("start-btn").addEventListener("click", () => {
+  player = document.getElementById("name").value;
+  console.log(player);
+  document.getElementById("name").disabled = true;
+  document.getElementById("start-btn").hidden = true;
+  socket.emit("join", {
+    name: player,
+  });
+});
+
 function incrementCounter() {
   counter++;
   if (counter === len) {
@@ -68,8 +80,10 @@ function incrementCounter() {
 }
 
 document.getElementById("roll-button").addEventListener("click", () => {
-  rollDice();
-  // turn = COMP;
+  const num = rollDice();
+  socket.emit("rollDice", {
+    num: num,
+  });
 });
 
 function rollDice() {
@@ -108,6 +122,11 @@ function game() {
   // while (playerPos != 99 && compPos != 99) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   let num = rollDice();
+  socket.emit("dice-roll", {
+    value: num,
+    player: 0,
+    newPosition: 1,
+  });
   if (turn == COMP1) {
     if (playerPos + num - 99 <= 0) {
       playerPos += num;
@@ -137,3 +156,17 @@ function drawPin(img, pos) {
 
   ctx.drawImage(img, xPos, yPos, 30, 40);
 }
+
+// Listen for events
+socket.on("join", (data) => {
+  document.getElementById("players-box").innerHTML += `<p>${data.name}</p>`;
+});
+
+socket.on("joined", (data) => {
+  data.forEach(
+    (player) =>
+      (document.getElementById(
+        "players-box"
+      ).innerHTML += `<p>${player.name}</p>`)
+  );
+});

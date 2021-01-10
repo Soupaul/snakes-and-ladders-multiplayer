@@ -19,11 +19,13 @@ io.on("connection", (socket) => {
   console.log("Made socket connection", socket.id);
 
   socket.on("join", (data) => {
-    if (data !== "") {
-      users.push(data);
-      console.log(data);
-    }
-    io.sockets.emit("join", { users: users });
+    users.push(data);
+    console.log(data);
+    io.sockets.emit("join", data);
+  });
+
+  socket.on("joined", () => {
+    socket.emit("joined", users);
   });
 });
 

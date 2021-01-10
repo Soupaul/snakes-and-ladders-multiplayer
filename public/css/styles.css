@@ -47,7 +47,8 @@ body {
   transition: color 0.25s 0.0833333333s;
   position: relative;
 }
-.draw-border::before, .draw-border::after {
+.draw-border::before,
+.draw-border::after {
   border: 0 solid transparent;
   box-sizing: border-box;
   content: "";
@@ -69,7 +70,8 @@ body {
 .draw-border:hover {
   color: #ffe593;
 }
-.draw-border:hover::before, .draw-border:hover::after {
+.draw-border:hover::before,
+.draw-border:hover::after {
   border-color: #ffe593;
   transition: border-color 0s, width 0.25s, height 0.25s;
   width: 100%;
@@ -102,7 +104,7 @@ body {
 }
 
 .form-input {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   color: #333;
   font-size: 1.3rem;
   padding: 1.5rem 2rem;
@@ -122,4 +124,14 @@ body {
   top: 11%;
   right: 8%;
   font-size: 1rem;
+}
+
+#players-box {
+  position: absolute;
+  top: 25%;
+  right: 19%;
+  color: azure;
+  font-size: 1.5rem;
+  font-family: "Roboto Slab", sans-serif;
+  text-align: center;
 }
