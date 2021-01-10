@@ -1,8 +1,8 @@
 const socket = io.connect("http://localhost:3000");
 
-const sleep = (milliseconds) => {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds));
-};
+// const sleep = (milliseconds) => {
+//   return new Promise((resolve) => setTimeout(resolve, milliseconds));
+// };
 
 const COMP1 = 0;
 const COMP2 = 1;
@@ -19,9 +19,8 @@ let redPieceImg = document.getElementById("red-piece");
 let bluePieceImg = document.getElementById("blue-piece");
 
 const side = canvas.width / 10;
-const offsetX = 37.5;
-const offsetY = 50;
-// let i = 0;
+const offsetX = side / 2;
+const offsetY = side / 2 + 20;
 let interval;
 
 const ladders = [
@@ -77,22 +76,52 @@ function rollDice() {
   return number;
 }
 
-function game() {
-  if (playerPos == 99 || compPos == 99) {
-    clearInterval(interval);
+function isLadderOrSnake(pos) {
+  let newPos = pos;
+
+  for (let i = 0; i < ladders.length; i++) {
+    if (ladders[i][0] == pos) {
+      console.log(ladders[i][0] + " " + ladders[i][1]);
+      newPos = ladders[i][1];
+      break;
+    }
   }
+
+  for (let i = 0; i < snakes.length; i++) {
+    if (snakes[i][0] == pos) {
+      console.log(snakes[i][0] + " " + snakes[i][1]);
+      newPos = snakes[i][1];
+      break;
+    }
+  }
+
+  return newPos;
+}
+
+function game() {
+  // if (playerPos == 99 || compPos == 99) {
+  //   clearInterval(interval);
+  // }
 
   // while (playerPos != 99 && compPos != 99) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   let num = rollDice();
   if (turn == COMP1) {
-    drawPin(redPieceImg, (playerPos += num));
-    drawPin(bluePieceImg, compPos);
-    turn = COMP2;
+    if (playerPos + num - 99 <= 0) {
+      playerPos += num;
+      playerPos = isLadderOrSnake(playerPos + 1) - 1;
+      drawPin(redPieceImg, playerPos);
+      drawPin(bluePieceImg, compPos);
+      turn = COMP2;
+    } else clearInterval(interval);
   } else if (turn == COMP2) {
-    drawPin(redPieceImg, playerPos);
-    drawPin(bluePieceImg, (compPos += num));
-    turn = COMP1;
+    if (compPos + num - 99 <= 0) {
+      compPos += num;
+      compPos = isLadderOrSnake(compPos + 1) - 1;
+      drawPin(redPieceImg, playerPos);
+      drawPin(bluePieceImg, compPos);
+      turn = COMP1;
+    } else clearInterval(interval);
   }
   // }
 }
@@ -101,24 +130,8 @@ function drawPin(img, pos) {
   let xPos =
     Math.floor(pos / 10) % 2 == 0
       ? (pos % 10) * side - 15 + offsetX
-      : canvas.width - ((pos % 10) * side - 15 + offsetX);
+      : canvas.width - ((pos % 10) * side + offsetX + 15);
   let yPos = canvas.height - (Math.floor(pos / 10) * side + offsetY);
 
   ctx.drawImage(img, xPos, yPos, 30, 40);
 }
-
-// function game() {
-//   if (i == 9) {
-//     clearInterval(interval);
-//   }
-
-//   ctx.clearRect(0, 0, canvas.width, canvas.height);
-//   ctx.drawImage(
-//     redPieceImg,
-//     offset + i * side - 15,
-//     canvas.height - 50,
-//     30,
-//     40
-//   );
-//   i++;
-// }
