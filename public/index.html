@@ -28,18 +28,20 @@
           placeholder="Your name"
           required
         />
-        <button class="btn draw-border" id="start-btn">Start Playing</button>
+        <button class="btn draw-border" id="start-btn">Join</button>
       </div>
     </div>
     <div id="players-box">
       <h3>Players currently online:</h3>
       <br>
+      <table id="players-table"></table>
     </div>
     <div id="current-player"></div>
-    <button class="btn draw-border" id="roll-button">Roll</button>
+    <button class="btn draw-border" id="roll-button" hidden>Roll</button>
     <div class="dice">
       <img src="./images/dice/dice1.png" alt="" id="dice" />
     </div>
+    <button class="btn draw-border" id="restart-btn" hidden>Restart</button>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/index.js"></script>
   </body>

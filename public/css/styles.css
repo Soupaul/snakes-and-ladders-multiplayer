@@ -131,19 +131,31 @@ body {
   top: 25%;
   right: 19%;
   color: azure;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  font-family: "Roboto Slab", sans-serif;
+}
+
+#current-player {
+  position: absolute;
+  bottom: 35%;
+  right: 25%;
+  color: azure;
+  font-size: 1.4rem;
   font-family: "Roboto Slab", sans-serif;
   text-align: center;
 }
 
-#current-player{
-
+#restart-btn {
   position: absolute;
-  bottom: 40%;
-  right: 25%;
-  color: azure;
-  font-size: 1.2rem;
-  font-family: "Roboto Slab", sans-serif;
-  text-align: center;
+  right: 20%;
+  bottom: 16%;
+}
 
+#players-table img {
+  height: 40px;
+  width: 30px;
+}
+
+#players-table td {
+  padding-right: 20px;
 }

@@ -1,6 +1,6 @@
 // Making Connection
 const socket = io.connect("http://localhost:3000");
-socket.emit("joined", "");
+socket.emit("joined");
 
 let players = []; // All players in the game
 let currentPlayer; // Player object for individual players
@@ -94,7 +94,11 @@ document.getElementById("start-btn").addEventListener("click", () => {
   const name = document.getElementById("name").value;
   document.getElementById("name").disabled = true;
   document.getElementById("start-btn").hidden = true;
+  document.getElementById("roll-button").hidden = false;
   currentPlayer = new Player(players.length, name, 0, images[players.length]);
+  document.getElementById(
+    "current-player"
+  ).innerHTML = `<p>Anyone can roll</p>`;
   socket.emit("join", currentPlayer);
 });
 
@@ -123,20 +127,22 @@ function drawPins() {
 
 // Listen for events
 socket.on("join", (data) => {
-  document.getElementById("players-box").innerHTML += `<p>${data.name}</p>`;
   players.push(new Player(players.length, data.name, data.pos, data.img));
   drawPins();
+  document.getElementById(
+    "players-table"
+  ).innerHTML += `<tr><td>${data.name}</td><td><img src=${data.img} height=50 width=40></td></tr>`;
 });
 
 socket.on("joined", (data) => {
   data.forEach((player, index) => {
     players.push(new Player(index, player.name, player.pos, player.img));
-    document.getElementById("players-box").innerHTML += `<p>${player.name}</p>`;
+    console.log(player);
+    document.getElementById(
+      "players-table"
+    ).innerHTML += `<tr><td>${player.name}</td><td><img src=${player.img}></td></tr>`;
   });
   drawPins();
-  document.getElementById(
-    "current-player"
-  ).innerHTML = `<p>Anyone can roll</p>`;
 });
 
 socket.on("rollDice", (data, turn) => {
@@ -159,7 +165,7 @@ socket.on("rollDice", (data, turn) => {
   let winner;
   for (let i = 0; i < players.length; i++) {
     if (players[i].pos == 99) {
-      winner = player[i];
+      winner = players[i];
       break;
     }
   }
@@ -170,5 +176,15 @@ socket.on("rollDice", (data, turn) => {
     ).innerHTML = `<p>${winner.name} has won!</p>`;
     document.getElementById("roll-button").hidden = true;
     document.getElementById("dice").hidden = true;
+    document.getElementById("restart-btn").hidden = false;
   }
+});
+
+// Logic to restart the game
+document.getElementById("restart-btn").addEventListener("click", () => {
+  socket.emit("restart");
+});
+
+socket.on("restart", () => {
+  window.location.reload();
 });

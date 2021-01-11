@@ -13,14 +13,13 @@ app.use(express.static("public"));
 const io = socket(server);
 
 // Players array
-const users = [];
+let users = [];
 
 io.on("connection", (socket) => {
   console.log("Made socket connection", socket.id);
 
   socket.on("join", (data) => {
     users.push(data);
-    console.log(data);
     io.sockets.emit("join", data);
   });
 
@@ -31,7 +30,12 @@ io.on("connection", (socket) => {
   socket.on("rollDice", (data) => {
     users[data.id].pos = data.pos;
     const turn = data.num != 6 ? (data.id + 1) % users.length : data.id;
-    io.sockets.emit("rollDice",data,turn);
+    io.sockets.emit("rollDice", data, turn);
+  });
+
+  socket.on("restart", () => {
+    users = [];
+    io.sockets.emit("restart");
   });
 });
 
