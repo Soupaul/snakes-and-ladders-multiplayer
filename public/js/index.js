@@ -2,30 +2,24 @@
 const socket = io.connect("http://localhost:3000");
 socket.emit("joined", "");
 
-// const sleep = (milliseconds) => {
-//   return new Promise((resolve) => setTimeout(resolve, milliseconds));
-// };
-
-let player;
-
-const COMP1 = 0;
-const COMP2 = 1;
-let playerPos = 0;
-let compPos = 0;
-let turn = COMP1;
+let players = []; // All players in the game
+let currentPlayer; // Player object for individual players
 
 let canvas = document.getElementById("canvas");
 canvas.width = document.documentElement.clientHeight * 0.9;
 canvas.height = document.documentElement.clientHeight * 0.9;
 let ctx = canvas.getContext("2d");
 
-let redPieceImg = document.getElementById("red-piece");
-let bluePieceImg = document.getElementById("blue-piece");
+const redPieceImg = "../images/red_piece.png";
+const bluePieceImg = "../images/blue_piece.png";
+const yellowPieceImg = "../images/yellow_piece.png";
+const greenPieceImg = "../images/green_piece.png";
 
 const side = canvas.width / 10;
 const offsetX = side / 2;
 const offsetY = side / 2 + 20;
-let interval;
+
+const images = [redPieceImg, bluePieceImg, yellowPieceImg, greenPieceImg];
 
 const ladders = [
   [2, 23],
@@ -48,125 +42,133 @@ const snakes = [
   [43, 17],
 ];
 
-var imgs = document.images,
-  len = imgs.length,
-  counter = 0;
+class Player {
+  constructor(id, name, pos, img) {
+    this.id = id;
+    this.name = name;
+    this.pos = pos;
+    this.img = img;
+  }
 
-[].forEach.call(imgs, function (img) {
-  if (img.complete) incrementCounter();
-  else img.addEventListener("load", incrementCounter, false);
-});
+  draw() {
+    let xPos =
+      Math.floor(this.pos / 10) % 2 == 0
+        ? (this.pos % 10) * side - 15 + offsetX
+        : canvas.width - ((this.pos % 10) * side + offsetX + 15);
+    let yPos = canvas.height - (Math.floor(this.pos / 10) * side + offsetY);
 
-document.getElementById("start-btn").addEventListener("click", () => {
-  player = document.getElementById("name").value;
-  console.log(player);
-  document.getElementById("name").disabled = true;
-  document.getElementById("start-btn").hidden = true;
-  socket.emit("join", {
-    name: player,
-  });
-});
+    let image = new Image();
+    image.src = this.img;
+    ctx.drawImage(image, xPos, yPos, 30, 40);
+  }
 
-function incrementCounter() {
-  counter++;
-  if (counter === len) {
-    console.log("All images loaded!");
-    // interval = setInterval(game, 1000);
-    // ctx.drawImage(bluePieceImg,40,canvas.height-50,30,40);
-    drawPin(redPieceImg, playerPos);
-    drawPin(bluePieceImg, compPos);
-    interval = setInterval(game, 3000);
+  updatePos(num) {
+    if (this.pos + num <= 99) {
+      this.pos += num;
+      this.pos = this.isLadderOrSnake(this.pos + 1) - 1;
+    }
+  }
+
+  isLadderOrSnake(pos) {
+    let newPos = pos;
+
+    for (let i = 0; i < ladders.length; i++) {
+      if (ladders[i][0] == pos) {
+        newPos = ladders[i][1];
+        break;
+      }
+    }
+
+    for (let i = 0; i < snakes.length; i++) {
+      if (snakes[i][0] == pos) {
+        newPos = snakes[i][1];
+        break;
+      }
+    }
+
+    return newPos;
   }
 }
 
+document.getElementById("start-btn").addEventListener("click", () => {
+  const name = document.getElementById("name").value;
+  document.getElementById("name").disabled = true;
+  document.getElementById("start-btn").hidden = true;
+  currentPlayer = new Player(players.length, name, 0, images[players.length]);
+  socket.emit("join", currentPlayer);
+});
+
 document.getElementById("roll-button").addEventListener("click", () => {
   const num = rollDice();
+  currentPlayer.updatePos(num);
   socket.emit("rollDice", {
     num: num,
+    id: currentPlayer.id,
+    pos: currentPlayer.pos,
   });
 });
 
 function rollDice() {
   const number = Math.ceil(Math.random() * 6);
-  document.getElementById("dice").src = `./images/dice/dice${number}.png`;
   return number;
 }
 
-function isLadderOrSnake(pos) {
-  let newPos = pos;
-
-  for (let i = 0; i < ladders.length; i++) {
-    if (ladders[i][0] == pos) {
-      console.log(ladders[i][0] + " " + ladders[i][1]);
-      newPos = ladders[i][1];
-      break;
-    }
-  }
-
-  for (let i = 0; i < snakes.length; i++) {
-    if (snakes[i][0] == pos) {
-      console.log(snakes[i][0] + " " + snakes[i][1]);
-      newPos = snakes[i][1];
-      break;
-    }
-  }
-
-  return newPos;
-}
-
-function game() {
-  // if (playerPos == 99 || compPos == 99) {
-  //   clearInterval(interval);
-  // }
-
-  // while (playerPos != 99 && compPos != 99) {
+function drawPins() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let num = rollDice();
-  socket.emit("dice-roll", {
-    value: num,
-    player: 0,
-    newPosition: 1,
+
+  players.forEach((player) => {
+    player.draw();
   });
-  if (turn == COMP1) {
-    if (playerPos + num - 99 <= 0) {
-      playerPos += num;
-      playerPos = isLadderOrSnake(playerPos + 1) - 1;
-      drawPin(redPieceImg, playerPos);
-      drawPin(bluePieceImg, compPos);
-      turn = COMP2;
-    } else clearInterval(interval);
-  } else if (turn == COMP2) {
-    if (compPos + num - 99 <= 0) {
-      compPos += num;
-      compPos = isLadderOrSnake(compPos + 1) - 1;
-      drawPin(redPieceImg, playerPos);
-      drawPin(bluePieceImg, compPos);
-      turn = COMP1;
-    } else clearInterval(interval);
-  }
-  // }
-}
-
-function drawPin(img, pos) {
-  let xPos =
-    Math.floor(pos / 10) % 2 == 0
-      ? (pos % 10) * side - 15 + offsetX
-      : canvas.width - ((pos % 10) * side + offsetX + 15);
-  let yPos = canvas.height - (Math.floor(pos / 10) * side + offsetY);
-
-  ctx.drawImage(img, xPos, yPos, 30, 40);
 }
 
 // Listen for events
 socket.on("join", (data) => {
   document.getElementById("players-box").innerHTML += `<p>${data.name}</p>`;
+  players.push(new Player(players.length, data.name, data.pos, data.img));
+  drawPins();
 });
 
 socket.on("joined", (data) => {
-  data.forEach(
-    (player) =>
-      (document.getElementById(
-        "players-box"
-      ).innerHTML += `<p>${player.name}</p>`)
-  );
+  data.forEach((player, index) => {
+    players.push(new Player(index, player.name, player.pos, player.img));
+    document.getElementById("players-box").innerHTML += `<p>${player.name}</p>`;
+  });
+  drawPins();
+  document.getElementById(
+    "current-player"
+  ).innerHTML = `<p>Anyone can roll</p>`;
+});
+
+socket.on("rollDice", (data, turn) => {
+  players[data.id].updatePos(data.num);
+  document.getElementById("dice").src = `./images/dice/dice${data.num}.png`;
+  drawPins();
+
+  if (turn != currentPlayer.id) {
+    document.getElementById("roll-button").hidden = true;
+    document.getElementById(
+      "current-player"
+    ).innerHTML = `<p>It's ${players[turn].name}'s turn</p>`;
+  } else {
+    document.getElementById("roll-button").hidden = false;
+    document.getElementById(
+      "current-player"
+    ).innerHTML = `<p>It's your turn</p>`;
+  }
+
+  let winner;
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].pos == 99) {
+      winner = player[i];
+      break;
+    }
+  }
+
+  if (winner) {
+    document.getElementById(
+      "current-player"
+    ).innerHTML = `<p>${winner.name} has won!</p>`;
+    document.getElementById("roll-button").hidden = true;
+    document.getElementById("dice").hidden = true;
+  }
 });

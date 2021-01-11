@@ -135,3 +135,15 @@ body {
   font-family: "Roboto Slab", sans-serif;
   text-align: center;
 }
+
+#current-player{
+
+  position: absolute;
+  bottom: 40%;
+  right: 25%;
+  color: azure;
+  font-size: 1.2rem;
+  font-family: "Roboto Slab", sans-serif;
+  text-align: center;
+
+}
