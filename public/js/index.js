@@ -1,5 +1,5 @@
 // Making Connection
-const socket = io.connect("https://glug-snakes-and-ladders.herokuapp.com");
+const socket = io.connect("http://localhost:3000");
 socket.emit("joined");
 
 let players = []; // All players in the game
