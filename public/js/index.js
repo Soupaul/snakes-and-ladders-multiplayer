@@ -1,5 +1,5 @@
 // Making Connection
-const socket = io.connect(process.env.FRONTEND_URL);
+const socket = io.connect("https://glug-snakes-and-ladders.herokuapp.com");
 socket.emit("joined");
 
 let players = []; // All players in the game
